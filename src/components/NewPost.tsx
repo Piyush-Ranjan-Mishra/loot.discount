@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import Post from "../models/Post";
 import Posts from "../models/Posts";
 
@@ -12,7 +12,17 @@ type NewPostProps = {
 
 const NewPost = ({ id, depth, postCount, onAddPost, post }: NewPostProps) => {
   const [posts, setPosts] = useState(new Posts({ id, depth, postCount, post }));
+  const [error, setError] = useState(null as string | null | undefined);
   const [validated, setValidated] = useState(false);
+  let userName, comment;
+
+  useEffect(()=> {
+    userName = '';
+    comment = '@'+ post?.userName;
+    if(post) {
+      console.log('NewReply', {post, userName, comment});
+    }
+  }, [post, userName, comment])
 
   return (
     <div className={depth === 0 ? "New-Post" : "new-reply"}>
@@ -21,6 +31,7 @@ const NewPost = ({ id, depth, postCount, onAddPost, post }: NewPostProps) => {
       <input
         type="text"
         id="fname"
+        value={userName}
         placeholder="Name"
         onChange={(event) => {
           posts?.post?.setUserName(event.target.value);
@@ -28,25 +39,39 @@ const NewPost = ({ id, depth, postCount, onAddPost, post }: NewPostProps) => {
           if (posts.post && posts.post?.validated !== validated)
             setValidated(posts.post?.validated);
         }}
+        required
       />
+
       <label htmlFor="comment">Comment</label>
       <input
         type="text"
         id="comment"
+        value={comment}
         placeholder="Write new post .."
         onChange={(event) => {
           posts?.post?.setComment(event.target.value);
           if (posts.post && posts.post?.validated !== validated)
             setValidated(posts.post.validated);
+          if (posts.post?.validated) {
+            setError(null);
+          }
         }}
+        required
       />
+      <span style={{ color: "red", fontSize: "small" }}>{error}</span>
       <div className="submitContainer">
         <button
           className={validated ? "submit" : ""}
           title="Submit"
           onClick={() => {
-            onAddPost(posts);
-            setPosts(new Posts({ id, depth, postCount }));
+            if (posts.post?.validated) {
+              onAddPost(posts);
+              userName = '';
+              comment = '';
+              setPosts(new Posts({ id, depth, postCount }));
+            } else {
+              setError(posts.post?.error);
+            }
           }}
         >
           Submit

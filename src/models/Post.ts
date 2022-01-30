@@ -10,6 +10,7 @@ export default class Post {
   comment: string = '';
   depth: number = 0;
   validated: boolean = false;
+  error?: string | null ;
 
   constructor(props: PostType) {
     this.id = props.id * 10000 + props.postCount + 1;
@@ -23,9 +24,19 @@ export default class Post {
 
   setComment(comment: string) {
     this.comment = comment;
+    this.validate();
   }
 
   validate() {
-    this.validated = this.userName != null && this.comment != null;
+    if(!this.userName) {
+      this.error = 'Username Required';
+    } else if(!this.comment) {
+      this.error = 'Comment Required';
+    }else {
+      this.error = undefined;
+    }
+    this.validated = this.error === undefined;
+    // if(this.validated)
+    // console.log('Validate', {validate: this.validated, userName:this.userName, comment: this.comment})
   }
 }
