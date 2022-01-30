@@ -1,1 +1,3 @@
-export const APP_LOAD_SUCCESS = "APP_LOAD_SERVICE_SUCCESS";
+export const POST_GET = "POST_GET";
+export const POST_PUT = "POST_PUT";
+export const POST_LOADING = "POST_LOADING";
