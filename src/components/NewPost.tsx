@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import {  useState } from "react";
 import Post from "../models/Post";
 import Posts from "../models/Posts";
 
