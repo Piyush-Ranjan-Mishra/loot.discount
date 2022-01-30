@@ -9,29 +9,21 @@ type NewPostProps = {
   onAddPost: any;
   post?: Post;
 };
-
+ let userRef: any, valueRef: any;
 const NewPost = ({ id, depth, postCount, onAddPost, post }: NewPostProps) => {
   const [posts, setPosts] = useState(new Posts({ id, depth, postCount, post }));
   const [error, setError] = useState(null as string | null | undefined);
   const [validated, setValidated] = useState(false);
-  let userName, comment;
-
-  useEffect(()=> {
-    userName = '';
-    comment = '@'+ post?.userName;
-    if(post) {
-      console.log('NewReply', {post, userName, comment});
-    }
-  }, [post, userName, comment])
+ 
 
   return (
-    <div className={depth === 0 ? "New-Post" : "new-reply"}>
+    <form className={depth === 0 ? "New-Post" : "new-reply"}>
       {depth === 0 && <h3>New Post</h3>}
       <label htmlFor="fname">User name:</label>
       <input
+        ref={(ref) => (userRef = ref)}
         type="text"
         id="fname"
-        value={userName}
         placeholder="Name"
         onChange={(event) => {
           posts?.post?.setUserName(event.target.value);
@@ -44,9 +36,9 @@ const NewPost = ({ id, depth, postCount, onAddPost, post }: NewPostProps) => {
 
       <label htmlFor="comment">Comment</label>
       <input
+        ref={(ref) => (valueRef = ref)}
         type="text"
         id="comment"
-        value={comment}
         placeholder="Write new post .."
         onChange={(event) => {
           posts?.post?.setComment(event.target.value);
@@ -63,11 +55,12 @@ const NewPost = ({ id, depth, postCount, onAddPost, post }: NewPostProps) => {
         <button
           className={validated ? "submit" : ""}
           title="Submit"
-          onClick={() => {
+          onClick={(e) => {
+            e.preventDefault();
             if (posts.post?.validated) {
               onAddPost(posts);
-              userName = '';
-              comment = '';
+              userRef.value = "";
+              valueRef.value = "";
               setPosts(new Posts({ id, depth, postCount }));
             } else {
               setError(posts.post?.error);
@@ -77,7 +70,7 @@ const NewPost = ({ id, depth, postCount, onAddPost, post }: NewPostProps) => {
           Submit
         </button>
       </div>
-    </div>
+    </form>
   );
 };
 
